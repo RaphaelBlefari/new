@@ -1,0 +1,1 @@
+start "" /D "C:\aplicacoes\prelude_painel_backend" "%ProgramFiles%\Git\git-bash.exe" -c "npm start >> C:/XAPEZE_LOGS/logs-aplicacao-backend.txt"

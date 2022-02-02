@@ -1,0 +1,19 @@
+
+> this-isle-backend@1.0.0 start C:\aplicacoes\prelude_painel_backend
+> node app/main.js
+
+⚡️[server]: Server is running at https://localhost:3000
+
+> this-isle-backend@1.0.0 start C:\aplicacoes\prelude_painel_backend
+> node app/main.js
+
+
+> this-isle-backend@1.0.0 start C:\aplicacoes\prelude_painel_backend
+> node app/main.js
+
+⚡️[server]: Server is running at https://localhost:3000
+
+> this-isle-backend@1.0.0 start C:\aplicacoes\prelude_painel_backend
+> node app/main.js
+
+⚡️[server]: Server is running at https://localhost:3000
