@@ -27,7 +27,6 @@ const dinossauroController = __importStar(require("./dinossauro/dinossauroContro
 const slotController = __importStar(require("./dinossauro/slotController"));
 const authController = __importStar(require("./auth/controller/authController"));
 const staffController = __importStar(require("./staff/staff-controller"));
-const coopController = __importStar(require("./coop/coop-controller"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
@@ -35,10 +34,10 @@ var corsOptions = {
     origin: 'http://localhost:3000/',
     optionsSuccessStatus: 200 // For legacy browser support
 };
-const app = express_1.default();
+const app = (0, express_1.default)();
 const PORT = 3000;
 const routes = express_1.default.Router();
-routes.use(cors_1.default());
+routes.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use("/api/", routes);
@@ -49,18 +48,13 @@ app.listen(PORT, () => {
 routes.get('/auth/steam', authController.AuthSteamLogin);
 routes.get('/auth/verify', authController.AuthSteamVerify);
 routes.get('/auth/teste', authController.teste);
-// User Dinos
+// OldControllers
 routes.post('/edicao/dino', authController.verifyJWTAddSteamIdRequest, dinossauroController.editUserDinos);
 routes.get('/slot/:idsteam', authController.verifyJWTAddSteamIdRequest, slotController.getUserSlots);
 routes.get('/userslotsativos/:idsteam', authController.verifyJWTAddSteamIdRequest, slotController.retornaUserSlotsAtivos);
 routes.get('/userdinos', authController.verifyJWTAddSteamIdRequest, dinossauroController.getUserDinos);
 routes.get('/userdinos/species', authController.verifyJWTAddSteamIdRequest, dinossauroController.retornaDinoSpecies);
-// Staffs
 routes.get('/staff/userdinos/:id', authController.verifyJWTAddSteamIdRequestStaff, staffController.getUserDinos);
 routes.post('/staff/userdinosedicao', authController.verifyJWTAddSteamIdRequestStaff, staffController.editUserDinos);
 routes.get('/staff/getuserbanimento/:id', authController.verifyJWTAddSteamIdRequestStaff, staffController.getBanimento);
 routes.post('/staff/edituserbanimento', authController.verifyJWTAddSteamIdRequestStaff, staffController.editBanimento);
-// Coops
-routes.get('/coop/usercoop', authController.verifyJWTAddSteamIdRequest, coopController.getUserCoop);
-routes.get('/coop/usuarioscoop/:id', authController.verifyJWTAddSteamIdRequestStaff, coopController.getCoop);
-routes.post('/coop/alterausuariocoop', authController.verifyJWTAddSteamIdRequestStaff, coopController.setCoopTipo);

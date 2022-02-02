@@ -34,31 +34,23 @@ const user_model_1 = require("./model/user-model");
 const dotenv = __importStar(require("dotenv"));
 const dinossauro_model_1 = require("./model/dinossauro-model");
 const uuid_1 = require("uuid");
-const coopService = __importStar(require("../coop/coop-service"));
 dotenv.config();
 const fs = require('fs-extra');
 const ENV_SERVERS = JSON.parse(process.env.ENV_SERVERS || ``);
 const ENV_DATA_USUARIOS_SLOT = process.env.ENV_DATA_USUARIOS_SLOT || ``;
 const ENV_USUARIOS_SLOT_FREE_QTD = Number(process.env.ENV_USUARIOS_SLOT_FREE_QTD) || 2;
-const ENV_USUARIOS_SLOT_PREMIUM_QTD = Number(process.env.ENV_USUARIOS_SLOT_PREMIUM_QTD) || 1;
-const ENV_USUARIOS_SLOT_DELUX_QTD = Number(process.env.ENV_USUARIOS_SLOT_DELUX_QTD) || 2;
-const editUserDino = (user, idSteam, staff, idSteamStaff) => __awaiter(void 0, void 0, void 0, function* () {
-    if (validaPreludeCoins(user.preludeCoins, idSteam, staff, idSteamStaff)) {
+const editUserDino = (user, idSteam, staff) => __awaiter(void 0, void 0, void 0, function* () {
+    if (validaPreludeCoins(user.preludeCoins, idSteam, staff)) {
         user.userDino.filter(x => x.IdServidor != "").forEach((udinos, index) => {
             let servidor = ENV_SERVERS.filter(x => x.name == udinos.IdServidor)[0];
             if (udinos.IdSlot != "" && udinos.Dinossauro.CharacterClass && udinos.Status == 3 || udinos.IdSlot != "" && udinos.Dinossauro.CharacterClass && udinos.Status == 2) {
                 try {
                     if (udinos.Status == 3) {
-                        console.log(`${new Date().toLocaleString()} - Excluir Manual - IdSteam: ${user.idSteam} -  [Servidor: ${servidor.name} -  Dino Removido: ${udinos.Dinossauro.CharacterClass} - ${udinos.Dinossauro.Growth}]`);
+                        console.log(`${new Date().toLocaleString()} - Excluir Manual - IdSteam: ${user.idSteam} -  [Servidor: ${udinos.IdServidor} -  Dino Removido: ${udinos.Dinossauro.CharacterClass} - ${udinos.Dinossauro.Growth}]`);
                         udinos.IdServidor = "";
                     }
                     udinos.IdServidor = "";
-                    if (fs.existsSync(`${servidor.path}/${idSteam}.json`)) {
-                        fs.unlink(`${servidor.path}/${idSteam}.json`);
-                    }
-                    else {
-                        console.log(`${new Date().toLocaleString()} - Tentativa Duplicidade, Enviando slot dino morto - IdSteam: ${user.idSteam} -  [Servidor: ${servidor.name} -  Dino: ${udinos.Dinossauro.CharacterClass} - ${udinos.Dinossauro.Growth}]`);
-                    }
+                    fs.unlink(`${servidor.path}/${idSteam}.json`);
                 }
                 catch (_a) {
                     udinos.IdServidor = "";
@@ -80,7 +72,7 @@ const editUserDino = (user, idSteam, staff, idSteamStaff) => __awaiter(void 0, v
             console.log("erro ao gravar slot");
         }
         logsEdicaoDino(user);
-        return exports.getUserDino(idSteam, false);
+        return (0, exports.getUserDino)(idSteam, false);
     }
     return new user_model_1.User;
 });
@@ -88,14 +80,12 @@ exports.editUserDino = editUserDino;
 const getUserDino = (idSteam, external) => __awaiter(void 0, void 0, void 0, function* () {
     let user = new user_model_1.User;
     user.idSteam = idSteam;
-    // Busca Slots
     try {
         user = JSON.parse(fs.readFileSync(`${ENV_DATA_USUARIOS_SLOT}/${idSteam}.json`));
-        user.qtdSlot = yield retornaQuantidadeSlots(idSteam);
     }
     catch (ex) {
-        user.preludeCoins = 1;
-        user.qtdSlot = yield retornaQuantidadeSlots(idSteam);
+        user.preludeCoins = 0;
+        user.qtdSlot = ENV_USUARIOS_SLOT_FREE_QTD;
         user.userDino = [];
     }
     // Buscar Servidores
@@ -113,6 +103,7 @@ const getUserDino = (idSteam, external) => __awaiter(void 0, void 0, void 0, fun
             user.userDino.push(userDino);
         }
     });
+    // Busca Slots
     //  Adiciona Slots disponiveis
     let slotsFreeQtdRestantes = user.userDino.filter(x => x.IdServidor == "").length;
     while (slotsFreeQtdRestantes < user.qtdSlot) {
@@ -131,7 +122,7 @@ const getUserDino = (idSteam, external) => __awaiter(void 0, void 0, void 0, fun
         dinos.filter(x => x.Dinossauro.CharacterClass).forEach(((dino, ia) => {
             if (dinosUnicos.filter(x => x.Dinossauro.CharacterClass.includes(dino.Dinossauro.CharacterClass.substring(0, 3))).length > 0) {
                 if (dino.IdServidor != "") {
-                    dino.IdSlot = uuid_1.v4();
+                    dino.IdSlot = (0, uuid_1.v4)();
                     dino.Status = 3;
                     console.log(`${new Date().toLocaleString()} - Duplicidade - IdSteam: ${user.idSteam} -  [Servidor: ${dino.IdServidor} -  Dino Removido: ${dino.Dinossauro.CharacterClass} - ${dino.Dinossauro.Growth}]`);
                 }
@@ -147,11 +138,11 @@ const getUserDino = (idSteam, external) => __awaiter(void 0, void 0, void 0, fun
         }));
         if (contemAlteracao) {
             user.userDino = dinos;
-            return exports.editUserDino(JSON.parse(JSON.stringify(user)), idSteam, false);
+            return (0, exports.editUserDino)(JSON.parse(JSON.stringify(user)), idSteam, false);
         }
         ;
     }
-    user.qtdSlot = yield retornaQuantidadeSlots(idSteam);
+    user.qtdSlot = ENV_USUARIOS_SLOT_FREE_QTD;
     user.userDino = user.userDino.sort((a, b) => a.IdSlot.localeCompare(b.IdSlot));
     return user;
 });
@@ -169,26 +160,21 @@ function logsEdicaoDino(user) {
     });
     console.log(`${new Date().toLocaleString()} - Alteração - IdSteam:  ${user.idSteam} ${dinosLog} `);
 }
-function validaPreludeCoins(preludeCoin, idSteam, staff, idSteamStaff) {
+function validaPreludeCoins(preludeCoin, idSteam, staff) {
     let user = new user_model_1.User;
     user.idSteam = idSteam;
     try {
         user = JSON.parse(fs.readFileSync(`${ENV_DATA_USUARIOS_SLOT}/${idSteam}.json`));
     }
     catch (ex) {
-        user.preludeCoins = 1;
-        user.qtdSlot = retornaQuantidadeSlots(idSteam);
+        user.preludeCoins = 0;
+        user.qtdSlot = ENV_USUARIOS_SLOT_FREE_QTD;
         user.userDino = [];
     }
     if (!staff) {
         if (preludeCoin > user.preludeCoins) {
             console.log(`${idSteam} - PreludeCoin Hacker - Solicitado: ${preludeCoin}, Atual: ${user.preludeCoins} `);
             return false;
-        }
-    }
-    else {
-        if (preludeCoin > user.preludeCoins) {
-            console.log(`${new Date().toLocaleString()} - PreludeCoin Staff - [Staff: ${idSteamStaff}  -  User: ${idSteam} - Adicionado: ${preludeCoin}, Atual: ${user.preludeCoins} ]`);
         }
     }
     if (preludeCoin < user.preludeCoins) {
@@ -205,21 +191,3 @@ const retornaDinoDBSpecies = () => __awaiter(void 0, void 0, void 0, function* (
     return [];
 });
 exports.retornaDinoDBSpecies = retornaDinoDBSpecies;
-function retornaQuantidadeSlots(idSteam) {
-    return new Promise((resolve, reject) => {
-        coopService.getCoop(idSteam).then(x => {
-            if (x.tipoCoop == "free") {
-                resolve(ENV_USUARIOS_SLOT_FREE_QTD);
-            }
-            else if (x.tipoCoop == "premium" && !x.expirado) {
-                resolve(ENV_USUARIOS_SLOT_FREE_QTD + ENV_USUARIOS_SLOT_PREMIUM_QTD);
-            }
-            else if (x.tipoCoop == "delux" && !x.expirado) {
-                resolve(ENV_USUARIOS_SLOT_FREE_QTD + ENV_USUARIOS_SLOT_DELUX_QTD);
-            }
-            else {
-                resolve(ENV_USUARIOS_SLOT_FREE_QTD);
-            }
-        });
-    });
-}

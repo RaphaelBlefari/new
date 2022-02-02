@@ -1,4 +1,0 @@
-
-> this-isle-backend@1.0.0 start C:\Users\desenvolvimento\Desktop\aplicacoes\prelude_painel_backend
-> node app/main.js
-

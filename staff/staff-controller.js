@@ -28,53 +28,45 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.retornaDinoSpecies = exports.editUserDinos = exports.getUserDinos = void 0;
-const dinossauroService = __importStar(require("./dinossauroService"));
+exports.editBanimento = exports.getBanimento = exports.editUserDinos = exports.getUserDinos = void 0;
+const staffService = __importStar(require("./staff-service"));
 const getUserDinos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.headers.steamid == "76561199083782944") {
-        console.log(`${new Date().toLocaleString()} - Mamifero Logou haha`);
-        res.status(403).send("Steam login failed, please verify your account , err: STEAM_GUARD_FAIL");
+    const user = yield staffService.getUserDinos(req.params.id);
+    try {
+        res.status(200).send(user);
     }
-    else {
-        const user = yield dinossauroService.getUserDino(req.headers.steamid, true);
-        try {
-            res.status(200).send(user);
-        }
-        catch (e) {
-            res.status(404).send(e.message);
-        }
+    catch (e) {
+        res.status(404).send(e);
     }
 });
 exports.getUserDinos = getUserDinos;
 const editUserDinos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.headers.steamid == "76561199083782944") {
-        console.log(`${new Date().toLocaleString()} - Mamifero Logou haha`);
-        res.status(403).send("Steam login failed, please verify your account , err: STEAM_GUARD_FAIL");
+    const user = yield staffService.editUserDinos(req.body, req.body.idSteam);
+    try {
+        res.status(200).send(user);
     }
-    else {
-        const user = yield dinossauroService.editUserDino(req.body, req.headers.steamid, false);
-        try {
-            res.status(200).send(user);
-        }
-        catch (e) {
-            res.status(404).send(e.message);
-        }
+    catch (e) {
+        res.status(404).send(e);
     }
 });
 exports.editUserDinos = editUserDinos;
-const retornaDinoSpecies = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.headers.steamid == "76561199083782944") {
-        console.log(`${new Date().toLocaleString()} - Mamifero Logou haha`);
-        res.status(403).send("Steam login failed, please verify your account , err: STEAM_GUARD_FAIL");
+const getBanimento = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const banido = yield staffService.getBanimento(req.params.id);
+    try {
+        res.status(200).send(banido);
     }
-    else {
-        const dinoSpecies = yield dinossauroService.retornaDinoDBSpecies();
-        try {
-            res.status(200).send(dinoSpecies);
-        }
-        catch (e) {
-            res.status(404).send(e.message);
-        }
+    catch (e) {
+        res.status(404).send(e);
     }
 });
-exports.retornaDinoSpecies = retornaDinoSpecies;
+exports.getBanimento = getBanimento;
+const editBanimento = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const banido = yield staffService.EditBanimento(req.body);
+    try {
+        res.status(200).send(banido);
+    }
+    catch (e) {
+        res.status(404).send(e);
+    }
+});
+exports.editBanimento = editBanimento;

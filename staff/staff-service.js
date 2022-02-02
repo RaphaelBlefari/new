@@ -36,8 +36,8 @@ const getUserDinos = (idSteam) => __awaiter(void 0, void 0, void 0, function* ()
     return dinossauroService.getUserDino(idSteam, false);
 });
 exports.getUserDinos = getUserDinos;
-const editUserDinos = (user, idSteam, idSteamStaff) => __awaiter(void 0, void 0, void 0, function* () {
-    return dinossauroService.editUserDino(user, idSteam, true, idSteamStaff);
+const editUserDinos = (user, idSteam) => __awaiter(void 0, void 0, void 0, function* () {
+    return dinossauroService.editUserDino(user, idSteam, true);
 });
 exports.editUserDinos = editUserDinos;
 const getBanimento = (idSteam) => __awaiter(void 0, void 0, void 0, function* () {

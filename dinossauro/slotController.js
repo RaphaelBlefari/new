@@ -28,35 +28,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserCoop = exports.setCoopTipo = exports.getCoop = void 0;
-const coopService = __importStar(require("./coop-service"));
-const getCoop = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const coop = yield coopService.getCoop(req.params.id);
+exports.retornaUserSlotsAtivos = exports.getUserSlots = void 0;
+const slotService = __importStar(require("./slotControllerService"));
+const getUserSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userSlot = yield slotService.getUserSlots(req.params.idsteam);
     try {
-        res.status(200).send(coop);
+        res.status(200).send(userSlot);
     }
     catch (e) {
-        res.status(404).send(e.message);
+        res.status(404).send(e);
     }
 });
-exports.getCoop = getCoop;
-const setCoopTipo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const coop = yield coopService.setCooptipo(req.body, req.headers.steamid);
+exports.getUserSlots = getUserSlots;
+const retornaUserSlotsAtivos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userSlotAtivos = yield slotService.retornaUserSlotsAtivos(req.params.idsteam);
     try {
-        res.status(200).send(coop);
+        res.status(200).send(userSlotAtivos);
     }
     catch (e) {
-        res.status(404).send(e.message);
+        res.status(404).send(e);
     }
 });
-exports.setCoopTipo = setCoopTipo;
-const getUserCoop = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const coop = yield coopService.getCoop(req.headers.steamid);
-    try {
-        res.status(200).send(coop);
-    }
-    catch (e) {
-        res.status(404).send(e.message);
-    }
-});
-exports.getUserCoop = getUserCoop;
+exports.retornaUserSlotsAtivos = retornaUserSlotsAtivos;

@@ -41,7 +41,7 @@ const AuthSteamLogin = (req, res) => __awaiter(void 0, void 0, void 0, function*
         })));
     }
     catch (e) {
-        res.status(404).send(e.message);
+        res.status(404).send(e);
     }
 });
 exports.AuthSteamLogin = AuthSteamLogin;
@@ -50,7 +50,7 @@ const AuthSteamVerify = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.redirect(`${ENV_FRONTEND_REDIRECT}?${yield authService.getUrlSteamVerify(req)}`);
     }
     catch (e) {
-        res.status(404).send(e.message);
+        res.status(404).send(e);
     }
 });
 exports.AuthSteamVerify = AuthSteamVerify;
@@ -59,7 +59,7 @@ const teste = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).send({});
     }
     catch (e) {
-        res.status(404).send(e.message);
+        res.status(404).send(e);
     }
 });
 exports.teste = teste;
@@ -80,7 +80,6 @@ const verifyJWTAddSteamIdRequest = (req, res, next) => __awaiter(void 0, void 0,
         }
     }
     catch (_a) {
-        res.status(401).json({ auth: false, messagem: "Erro ao validar token" });
     }
 });
 exports.verifyJWTAddSteamIdRequest = verifyJWTAddSteamIdRequest;
@@ -88,6 +87,7 @@ const verifyJWTAddSteamIdRequestStaff = (req, res, next) => __awaiter(void 0, vo
     try {
         const token = req.headers['authorization'];
         if (req.headers["origin"] != ENV_FRONTEND_REDIRECT || !token) {
+            console.log((yield authService.getUserSteamIdStaff(token)) + " - " + req.headers["origin"] + " --" + ENV_FRONTEND_REDIRECT);
             return res.status(401).json({ message: 'Versão do navegador invalida. Err: 335549R2' });
         }
         req.headers.steamid = yield authService.getUserSteamIdStaff(token);

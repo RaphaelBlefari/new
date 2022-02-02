@@ -60,7 +60,7 @@ const getUserSteamIdStaff = (token) => __awaiter(void 0, void 0, void 0, functio
         if (verifyToken(token)) {
             var decoded = jwt.verify(token, ENV_TOKEN_SECRET);
             if (retornaUsuarioTipo(decoded.tokenPayload.steamid) == "administrador") {
-                resolve(decoded.tokenPayload.steamid);
+                resolve(decoded);
             }
             else {
                 reject();
